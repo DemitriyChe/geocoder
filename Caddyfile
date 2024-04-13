@@ -1,0 +1,69 @@
+{
+	{$DEBUG}
+	{$AUTO_HTTPS_OFF}
+	servers {
+		{$METRICS}
+		timeouts {
+			read_body 5m
+			read_header 5m
+			write 15m
+			idle 5m
+		}
+	}
+}
+
+(hidden) {
+	@hidden {
+		path_regexp (^|\/)\.[^\.\/]+
+		not path /.well-known/assetlinks.json
+	}
+
+	respond @hidden 404 {
+		close
+	}
+}
+
+(static) {
+	@static {
+		path *.html *.txt *.css *.js *.json *.xml *.woff2 *.ttf *.svg *.ico *.jpg *.jpeg *.png *.gif
+	}
+
+	header @static {
+		-Server
+		Cache-Control "public, max-age=31536000"
+		X-Content-Type-Options "nosniff"
+	}
+
+	file_server @static
+}
+
+(php) {
+	@index file index.php
+	rewrite @index {http.matchers.file.relative}
+
+	@php path *.php
+	reverse_proxy @php app:9000 {
+		transport fastcgi {
+			split .php
+			dial_timeout 3s
+			read_timeout 15s
+			write_timeout 30s
+		}
+
+		header_down -Server
+		header_down X-Xss-Protection "1; mode=block"
+		header_down X-Content-Type-Options "nosniff"
+	}
+}
+
+{$HOST} {
+	encode gzip
+
+	root * /var/www/html/public
+
+	route {
+		import hidden
+		import static
+		import php
+	}
+}
