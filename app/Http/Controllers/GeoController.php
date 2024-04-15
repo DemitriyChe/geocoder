@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SearchQuery;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Illuminate\Http\Request;
@@ -18,6 +19,12 @@ class GeoController extends Controller
 
         if (strlen($query = $request->input('query')) < 3) {
             return view('home', ['data' => $data, 'query' => $query]);
+        }
+
+        if (!SearchQuery::where('query', $query)->first()) {
+            $newQuery = new SearchQuery();
+            $newQuery->query = $query;
+            $newQuery->save();
         }
 
         $resultsLimit = 5;
