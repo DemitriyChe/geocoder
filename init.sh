@@ -2,4 +2,4 @@
 
 composer install && \
  composer clear-cache && \
- php artisan migrate
+ php artisan migrate --force
