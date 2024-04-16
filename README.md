@@ -3,7 +3,7 @@
 Для развертывания проекта необходимо использовать команду
 
 ```shell
-docker-compose up --build -d && docker exec laravel_app php artisan migrate
+docker-compose up --build -d && docker exec laravel_app ./init.sh
 ```
 
 Для решения первой задачи была создана миграция для создания таблицы по данной структуре с примерами данных.

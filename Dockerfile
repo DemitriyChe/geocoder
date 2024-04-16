@@ -15,8 +15,6 @@ COPY . .
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
         --filename=composer \
-        --install-dir=/usr/local/bin && \
-    composer install && \
-    composer clear-cache
+        --install-dir=/usr/local/bin
 
 USER www-data

@@ -64,6 +64,7 @@ services:
             - DB_PASSWORD=password
             - APP_DEBUG=true
             - YA_API_KEY=
+            - APP_KEY=base64:XXhUEaO++OtjDFxdVdq+gdxylmncT0Kl1AlXXVtRRVc=
         depends_on:
             - database
         logging: *default-logging
